@@ -4,6 +4,8 @@ import coding_challenges.weather_api.dtos.WeatherDTO;
 import coding_challenges.weather_api.services.interfaces.WeatherService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,6 +21,7 @@ public class IWeatherSerivce implements WeatherService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
+    @Cacheable(value = "WEATHER_CACHE", key = "#city")
     public WeatherDTO getWeather(String city) {
         Map<String, String> uriVariables = Map.of("city", city);
         String jsonResponse = restTemplate.getForObject(weatherApiUrl, String.class, uriVariables);
